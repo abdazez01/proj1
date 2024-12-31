@@ -9,6 +9,8 @@ import fjwt from '@fastify/jwt';
 import swaggerui from '@fastify/swagger-ui';
 import swagger from '@fastify/swagger';
 import {withRefResolver}from 'fastify-zod';
+import expensesHandler from './modules/Expenses/Expenses.route';
+import { expensesSchema } from './modules/Expenses/Expenses.schema';
 // Load environment variables from .env
 dotenv.config();
 
@@ -61,7 +63,7 @@ server.get("/isok",async function() {
 
 async function main() {
 
-  for(const schema of userSchema){
+  for(const schema of [...userSchema,...expensesSchema]){
     server.addSchema(schema);
   }
 
@@ -90,7 +92,7 @@ async function main() {
 
 
   server.register(userRoutes, {prefix: '/user'})
-
+  server.register(expensesHandler,{prefix: '/expenses'})
 
 // Start the server
 const start = async () => {

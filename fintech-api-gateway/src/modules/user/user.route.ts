@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { getUserInfoHandler, getUsersHandler, loginHandler, registerUserHandler } from "./user.controller";
+import { getUserInfoHandler, loginHandler, registerUserHandler } from "./user.controller";
 import { Schema } from "zod";
 import { $ref } from "./user.schema";
 async function userRoutes(server:FastifyInstance) {
@@ -23,9 +23,6 @@ server.post('/login',{
     }}
 },loginHandler)
 
-server.get('/',{
-    preHandler: [server.authenticate]
-}, getUsersHandler)
 
 server.get('/fetchInfo',{
     preHandler: [server.authenticate],

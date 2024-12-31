@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail, findUsers, getUserInfo } from "./user.service";
+import { createUser, findUserByEmail, getUserInfo } from "./user.service";
 import { createUserInput, loginInput } from "./user.schema";
 import { comparePassword } from "../../utils/hash";
 import { server } from "../..";
@@ -52,13 +52,15 @@ export async function loginHandler(request:FastifyRequest<
     }
 }
 
-export async function getUsersHandler() {
-    const users = await findUsers() // Fetch all users from the User_Info model
-    return users;
-}
 
-export async function getUserInfoHandler(request:FastifyRequest) 
-{
+export async function getUserInfoHandler(request:FastifyRequest,reply:FastifyReply) 
+{try{
 const userInfo = await getUserInfo(request.user.ID)
+
 return userInfo    
+    }
+    catch(e){
+        console.log(e);
+        return reply.code(500).send(e);
+    }
 }

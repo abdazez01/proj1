@@ -31,15 +31,16 @@ model Account {
 
 model Expense {
   Expense_ID Int      @id @default(autoincrement())
-  Name       String
+  ExpenseName  String
   Price      Float
+  createdAt  DateTime
   Account    Account  @relation(fields: [Account_ID], references: [ID])
   Account_ID Int
 }
 
 model User_Info {
   ID        Int     @id
-  Name      String
+  UserName  String  @default("USER")
   Age       Int
   Location  String
   Salary    Float

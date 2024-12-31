@@ -29,9 +29,6 @@ export async function findUserByEmail(email: string) {
 });
 }
 
-export async function findUsers() {
-   return prisma.user_Info.findMany();
-}
 
 export async function getUserInfo(owener_ID:number) {
   return prisma.user_Info.findFirst({
@@ -41,7 +38,7 @@ export async function getUserInfo(owener_ID:number) {
           Email:true
         }
       },
-      Name:true,
+      UserName:true,
       Age:true,
       Location:true,
       Salary:true,

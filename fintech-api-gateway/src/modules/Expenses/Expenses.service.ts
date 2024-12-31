@@ -17,3 +17,15 @@ export async function getExpenses(owener_ID:number) {
     });    
     return(expenses);
 }
+
+export async function getAllExpensesPrice(owener_ID:number) {
+    const expenses = await prisma.expense.findMany({
+        select:{
+            Price:true
+        },
+        where:{
+            Account_ID:owener_ID
+        }
+    });    
+    return(expenses);
+}

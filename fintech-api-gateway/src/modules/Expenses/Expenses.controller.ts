@@ -1,6 +1,7 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { createExpenseInput } from "./Expenses.schema";
-import { createExpense, getExpenses } from "./Expenses.service";
+import { createExpense, getAllExpensesPrice, getExpenses } from "./Expenses.service";
+import { getUserSalary } from "../user/user.service";
 
 export async function createExpenseHandler(request:FastifyRequest<{
     Body : createExpenseInput,
@@ -29,3 +30,28 @@ export async function getExpensesHandler(request:FastifyRequest,reply:FastifyRep
         return reply.code(500).send(e);
     }
 };
+
+export async function salaryToExpensesHandler(request: FastifyRequest, reply: FastifyReply) {
+    try {
+        const allPriceExpensesForUser = await getAllExpensesPrice(request.user.ID);
+        const userSalaryResult = await getUserSalary(request.user.ID);
+
+   
+        if (!userSalaryResult || userSalaryResult.Salary === 0) {
+            return reply.status(400).send({ error: "Salary not found or is zero" });
+        }
+
+       
+        const totalExpenses = allPriceExpensesForUser.reduce((sum, expense) => sum + expense.Price, 0);
+
+        const percentage = (totalExpenses / userSalaryResult.Salary) * 100;
+
+        return reply.send({
+            totalExpenses,
+            salary: userSalaryResult.Salary,
+            percentage: percentage.toFixed(2),
+        });
+    } catch (error) {
+        return reply.status(500).send({ error: "An error occurred while calculating percentage" });
+    }
+}

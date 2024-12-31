@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
 import { $ref } from "./Expenses.schema";
-import { createExpenseHandler, getExpensesHandler } from "./Expenses.controller";
+import { createExpenseHandler, getExpensesHandler, salaryToExpensesHandler } from "./Expenses.controller";
 
 export default async function expensesHandler(server:FastifyInstance) {
-    server.post('/addExpense',{
+    server.post('/add',{
          preHandler: [server.authenticate],
             schema:{
                 body: $ref("expenseSchema"),
@@ -14,7 +14,7 @@ export default async function expensesHandler(server:FastifyInstance) {
     
     },createExpenseHandler)
 
-    server.get('/getExpenses',{
+    server.get('/get',{
         preHandler: [server.authenticate],
            schema:{
                response:{
@@ -23,5 +23,7 @@ export default async function expensesHandler(server:FastifyInstance) {
            }
    
    },getExpensesHandler)
+
+   server.get('/toSalary',{preHandler: [server.authenticate],},salaryToExpensesHandler)
 
 }

@@ -19,6 +19,15 @@ const cert = fs.readFileSync('./cert/root.crt');
 // Initialize Prisma Client
 const prisma = new PrismaClient();
 
+declare module "@fastify/jwt"{
+  export interface FastifyJWT{
+    user:{
+        "ID":number,
+        "Email":string
+    }
+  }
+}
+
 declare module "fastify"{
   export interface FastifyInstance{
     authenticate: any

@@ -29,6 +29,17 @@ const createUserResponseSchema = z.object({
     Currency: z.string(),
     Gender: z.boolean(),
 })
+
+const returnuserinfo = z.object({
+    Email: z.string(),
+    Name: z.string(),
+    Age: z.number(),
+    Location: z.string(),
+    Salary: z.number(),
+    Currency: z.string(),
+    Gender: z.boolean(),
+})
+
 const loginSchema = z.object({
     Email: z.string(
         {
@@ -53,4 +64,5 @@ export const {schemas:userSchema, $ref}= buildJsonSchemas({
     createUserResponseSchema,
     loginSchema,
     loginResponseSchema,
+    returnuserinfo,
 });

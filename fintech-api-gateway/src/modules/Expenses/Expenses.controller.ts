@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createExpenseInput } from "./Expenses.schema";
-import { createExpense, getAllExpensesPrice, getExpenses } from "./Expenses.service";
+import { createExpenseInput, delExpenseInput } from "./Expenses.schema";
+import { createExpense, delExpenses, getAllExpensesPrice, getExpenses } from "./Expenses.service";
 import { getUserSalary } from "../user/user.service";
 
 export async function createExpenseHandler(request:FastifyRequest<{
@@ -53,5 +53,20 @@ export async function salaryToExpensesHandler(request: FastifyRequest, reply: Fa
         });
     } catch (error) {
         return reply.status(500).send({ error: "An error occurred while calculating percentage" });
+    }
+}
+
+export async function delExpensesHandler(request:FastifyRequest<{Body:delExpenseInput}>,reply:FastifyReply) 
+{try{
+const delExpense = await delExpenses(request.body.Expense_ID);
+if(delExpense){
+return reply.code(201).send({message:"Expense deleted successfully"});  }
+else{
+    return reply.code(201).send({message:"Expense deleted unsuccessfully"});  
+}
+    }
+    catch(e){
+        console.log(e);
+        return reply.code(500).send(e);
     }
 }

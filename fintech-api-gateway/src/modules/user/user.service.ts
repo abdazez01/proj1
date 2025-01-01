@@ -60,3 +60,24 @@ export async function getUserSalary(owener_ID:number){
     }
   });
 }
+
+export async function delUser(owener_ID:number){
+  const delUsere = prisma.user_Info.deleteMany({
+    where:{
+      ID:owener_ID
+    }
+  })
+
+  const delAC = prisma.account.deleteMany({
+    where:{ID:owener_ID}
+  })
+
+  return (delUsere);
+}
+
+export async function updateUserInfoInDatabase(ID: number, updates: Record<string, any>) {
+  return prisma.user_Info.update({
+      where: { ID },
+      data: updates,
+  });
+}

@@ -1,8 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, findUserByEmail, getUserInfo } from "./user.service";
-import { createUserInput, loginInput } from "./user.schema";
+import { createUser, delUser, findUserByEmail, getUserInfo, updateUserInfoInDatabase } from "./user.service";
+import { createUserInput, loginInput, updateUserSchema } from "./user.schema";
 import { comparePassword } from "../../utils/hash";
 import { server } from "../..";
+import { delAllOCRForUser } from "../OCR/OCR.service";
+import { delAllExpensesForUser } from "../Expenses/Expenses.service";
 
 export async function registerUserHandler(request:FastifyRequest<
     {
@@ -52,15 +54,51 @@ export async function loginHandler(request:FastifyRequest<
     }
 }
 
-
 export async function getUserInfoHandler(request:FastifyRequest,reply:FastifyReply) 
 {try{
 const userInfo = await getUserInfo(request.user.ID)
 
-return userInfo    
+return reply.code(201).send(userInfo);  
     }
     catch(e){
         console.log(e);
         return reply.code(500).send(e);
+    }
+}
+
+export async function delUserHandler(request:FastifyRequest,reply:FastifyReply) 
+{try{
+    const delOcr = await delAllOCRForUser(request.user.ID)
+    const delExpenses = await delAllExpensesForUser(request.user.ID)
+    const delUsere = await delUser(request.user.ID)
+
+return reply.code(201).send({
+    message:"user deleted successfully"
+})  
+    }
+    catch(e){
+        console.log(e);
+        return reply.code(500).send(e);
+    }
+}
+
+export async function updateUserInfoHandler(request: FastifyRequest, reply: FastifyReply) {
+    // Get ID from JWT (assuming `request.user` is populated by your authentication middleware)
+    const ID = request.user.ID;
+
+    const parsedResult = updateUserSchema.safeParse(request.body);
+
+    if (!parsedResult.success) {
+        return reply.status(400).send({ error: "Invalid input", details: parsedResult.error.errors });
+    }
+
+    const updates = parsedResult.data;
+
+    try {
+        const updatedUser = await updateUserInfoInDatabase(ID, updates);
+        return reply.code(201).send(updatedUser);
+    } catch (error) {
+        console.error(error);
+        return reply.status(500).send({ error: "An error occurred while updating user information." });
     }
 }

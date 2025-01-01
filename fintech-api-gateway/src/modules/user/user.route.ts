@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { getUserInfoHandler, loginHandler, registerUserHandler } from "./user.controller";
+import { delUserHandler, getUserInfoHandler, loginHandler, registerUserHandler, updateUserInfoHandler } from "./user.controller";
 import { Schema } from "zod";
 import { $ref } from "./user.schema";
 async function userRoutes(server:FastifyInstance) {
@@ -32,6 +32,17 @@ server.get('/fetchInfo',{
         }
     }
 },getUserInfoHandler)
+
+server.delete('/delete',{preHandler: [server.authenticate]},delUserHandler);
+
+server.put('/update',{preHandler: [server.authenticate],
+    schema:{
+        body: $ref("updateUserSchema"),
+        response:{
+            201:$ref("updateUserSchema"),
+        }
+    }
+},updateUserInfoHandler)
 
 }
 

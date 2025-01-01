@@ -32,13 +32,13 @@ const createUserResponseSchema = z.object({
 });
 
 const returnuserinfo = z.object({
-    Email: z.string(),
-    UserName: z.string(),
-    Age: z.number(),
-    Location: z.string(),
-    Salary: z.number(),
-    Currency: z.string(),
-    Gender: z.boolean(),
+    Email: z.string().optional(),
+    UserName: z.string().optional(),
+    Age: z.number().optional(),
+    Location: z.string().optional(),
+    Salary: z.number().optional(),
+    Currency: z.string().optional(),
+    Gender: z.boolean().optional(),
 });
 
 const loginSchema = z.object({
@@ -58,6 +58,17 @@ const loginResponseSchema = z.object({
  accessToken: z.string(),
 });
 
+export const updateUserSchema = z.object({
+    UserName: z.string().optional(),
+    Age: z.number().optional(),
+    Location: z.string().optional(),
+    Salary: z.number().optional(),
+    Currency: z.string().optional(),
+    Gender: z.boolean().optional(),
+});
+
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+
 export type createUserInput = z.infer<typeof createUserSchema>;
 
 export type loginInput = z.infer<typeof loginSchema>;
@@ -68,4 +79,5 @@ export const {schemas:userSchema, $ref}= buildJsonSchemas({
     loginSchema,
     loginResponseSchema,
     returnuserinfo,
+    updateUserSchema
 },{ $id: "UserSchema" });

@@ -29,3 +29,18 @@ export async function getAllExpensesPrice(owener_ID:number) {
     });    
     return(expenses);
 }
+
+export async function delAllExpensesForUser(owener_ID:number){
+    return prisma.expense.deleteMany({
+        where:{Account_ID:owener_ID}
+    });
+  };
+
+  export async function delExpenses(expense_ID:number) {
+    const expenses = await prisma.expense.deleteMany({
+        where:{
+            Expense_ID:expense_ID
+        }
+    });    
+    return(expenses);
+}

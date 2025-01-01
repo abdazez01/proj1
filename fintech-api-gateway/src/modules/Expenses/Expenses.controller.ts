@@ -1,7 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { createExpenseInput, delExpenseInput } from "./Expenses.schema";
-import { createExpense, delExpenses, getAllExpensesPrice, getExpenses } from "./Expenses.service";
+import { createExpense, delExpenses, getAllExpensesPrice, getExpenses, updateExpense } from "./Expenses.service";
 import { getUserSalary } from "../user/user.service";
+import { updateExpenseInput } from "./Expenses.schema";
 
 export async function createExpenseHandler(request:FastifyRequest<{
     Body : createExpenseInput,
@@ -63,6 +64,21 @@ if(delExpense){
 return reply.code(201).send({message:"Expense deleted successfully"});  }
 else{
     return reply.code(201).send({message:"Expense deleted unsuccessfully"});  
+}
+    }
+    catch(e){
+        console.log(e);
+        return reply.code(500).send(e);
+    }
+}
+
+export async function updateExpenseHandler(request:FastifyRequest<{Body:updateExpenseInput}>,reply:FastifyReply) 
+{try{
+const upExpense = await updateExpense(request.body,request.user.ID);
+if(upExpense){
+return reply.code(201).send(upExpense);}
+else{
+    return reply.code(201).send({message:"Expense updated unsuccessfully"});  
 }
     }
     catch(e){

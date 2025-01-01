@@ -1,6 +1,6 @@
 import { date } from "zod";
 import prisma from "../../utils/prisma";
-import { createExpenseInput } from "./Expenses.schema";
+import { createExpenseInput, updateExpenseInput } from "./Expenses.schema";
 
 export async function createExpense(expensesInput:createExpenseInput,owener_ID:number) {
     const newExpense = await prisma.expense.create({
@@ -44,3 +44,18 @@ export async function delAllExpensesForUser(owener_ID:number){
     });    
     return(expenses);
 }
+
+export async function updateExpense( updatExp: updateExpenseInput, owner_ID: number) {
+const{Expense_ID,...rest}=updatExp
+    const updatedExpense = await prisma.expense.updateMany({
+      where: {
+        Expense_ID,
+        Account_ID: owner_ID, // Ensure the expense belongs to the user
+      },
+      data: {...rest
+      },
+    });
+  
+    return updatedExpense;
+  }
+  

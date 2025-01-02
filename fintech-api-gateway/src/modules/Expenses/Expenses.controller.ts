@@ -47,7 +47,7 @@ export async function salaryToExpensesHandler(request: FastifyRequest, reply: Fa
 
         const percentage = (totalExpenses / userSalaryResult.Salary) * 100;
 
-        return reply.send({
+        return reply.code(201).send({
             totalExpenses,
             salary: userSalaryResult.Salary,
             percentage: percentage.toFixed(2),

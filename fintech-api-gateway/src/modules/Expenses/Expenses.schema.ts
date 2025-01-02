@@ -2,6 +2,7 @@ import {z} from 'zod'
 import {buildJsonSchemas} from'fastify-zod'
 
 const expenseSchema = z.object({
+    Expense_ID: z.number(),
     ExpenseName:z.string(),
     Price:z.number(),
     createdAt:z.date(),
@@ -20,6 +21,12 @@ const updateExpenseSchema = z.object({
   });
   
 
+  const Tosal = z.object({
+    totalExpenses: z.number(),
+    salary: z.number(),
+    percentage:z.string(),
+  });
+
 
 const expensesResponseSchema = z.array(expenseSchema);
 
@@ -31,5 +38,6 @@ export const {schemas:expensesSchema, $ref}= buildJsonSchemas({
 expenseSchema,
 expensesResponseSchema,
 delExpenseSchema,
-updateExpenseSchema
+updateExpenseSchema,
+Tosal
 },{ $id: "ExpenseSchema" });

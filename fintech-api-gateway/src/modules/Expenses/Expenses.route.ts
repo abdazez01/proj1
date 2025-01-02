@@ -24,7 +24,13 @@ export default async function expensesHandler(server:FastifyInstance) {
    
    },getExpensesHandler)
 
-   server.get('/toSalary',{preHandler: [server.authenticate],},salaryToExpensesHandler)
+   server.get('/toSalary',{preHandler: [server.authenticate],
+  schema:{
+    response: {
+      201: $ref("Tosal"),
+    },
+  }
+   },salaryToExpensesHandler)
 
    server.delete('/delete',{preHandler: [server.authenticate],schema:{body:$ref("delExpenseSchema")}},delExpensesHandler)
 

@@ -25,17 +25,13 @@ server.post('/login',{
 
 
 server.get('/fetchInfo',{
-    
+    preHandler: [server.authenticate],
     schema:{
         response:{
             201:$ref("returnuserinfo"),
         }
     }
-},async (request, reply) => {
-      // Log the Authorization header
-      const authHeader = request.headers['authorization'];
-      console.log('Authorization Header:', authHeader);
-})
+},getUserInfoHandler)
 
 server.delete('/delete',{preHandler: [server.authenticate]},delUserHandler);
 

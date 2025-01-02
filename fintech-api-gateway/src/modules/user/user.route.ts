@@ -25,7 +25,7 @@ server.post('/login',{
 
 
 server.get('/fetchInfo',{
-    preHandler: [server.authenticate],
+    
     schema:{
         response:{
             201:$ref("returnuserinfo"),

@@ -38,7 +38,6 @@ declare module "fastify"{
 }
 
 export const server = Fastify({
-  logger:true,
   https: {
     key,
     cert,
@@ -62,7 +61,7 @@ server.decorate("authenticate", async (request:FastifyRequest,reply:FastifyReply
 server.register(cors, { 
   origin: 'http://localhost:8081',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: '*', 
 });
 
 server.get("/isok",async function() {

@@ -31,7 +31,11 @@ server.get('/fetchInfo',{
             201:$ref("returnuserinfo"),
         }
     }
-},getUserInfoHandler)
+},async (request, reply) => {
+      // Log the Authorization header
+      const authHeader = request.headers['authorization'];
+      console.log('Authorization Header:', authHeader);
+})
 
 server.delete('/delete',{preHandler: [server.authenticate]},delUserHandler);
 

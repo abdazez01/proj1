@@ -11,6 +11,7 @@ import swagger from '@fastify/swagger';
 import {withRefResolver}from 'fastify-zod';
 import expensesHandler from './modules/Expenses/Expenses.route';
 import { expensesSchema } from './modules/Expenses/Expenses.schema';
+import cors from '@fastify/cors';
 // Load environment variables from .env
 dotenv.config();
 
@@ -56,6 +57,12 @@ server.decorate("authenticate", async (request:FastifyRequest,reply:FastifyReply
   }
 
 
+});
+
+server.register(cors, { 
+  origin: 'http://localhost:8081',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 });
 
 server.get("/isok",async function() {

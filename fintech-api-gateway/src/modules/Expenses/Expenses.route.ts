@@ -6,7 +6,7 @@ export default async function expensesHandler(server:FastifyInstance) {
     server.post('/add',{
          preHandler: [server.authenticate],
             schema:{
-                body: $ref("expenseSchema"),
+                body: $ref("expenseccSchema"),
                 response:{
                     201:$ref("expenseSchema"),
                 }

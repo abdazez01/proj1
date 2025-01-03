@@ -9,6 +9,13 @@ const expenseSchema = z.object({
     Category:z.string(),
 });
 
+const expenseccSchema = z.object({
+  ExpenseName:z.string(),
+  Price:z.number(),
+  createdAt:z.date(),
+  Category:z.string(),
+});
+
 const delExpenseSchema = z.object({
     Expense_ID:z.number(),
 })
@@ -30,7 +37,7 @@ const updateExpenseSchema = z.object({
 
 const expensesResponseSchema = z.array(expenseSchema);
 
-export type createExpenseInput = z.infer<typeof expenseSchema>;
+export type createExpenseInput = z.infer<typeof expenseccSchema>;
 export type delExpenseInput = z.infer<typeof delExpenseSchema>;
 export type updateExpenseInput = z.infer<typeof updateExpenseSchema>;
 
@@ -39,5 +46,6 @@ expenseSchema,
 expensesResponseSchema,
 delExpenseSchema,
 updateExpenseSchema,
+expenseccSchema,
 Tosal
 },{ $id: "ExpenseSchema" });

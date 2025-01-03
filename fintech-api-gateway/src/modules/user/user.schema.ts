@@ -60,11 +60,9 @@ const loginResponseSchema = z.object({
 
 export const updateUserSchema = z.object({
     UserName: z.string().optional(),
-    Age: z.number().optional(),
     Location: z.string().optional(),
     Salary: z.number().optional(),
     Currency: z.string().optional(),
-    Gender: z.boolean().optional(),
 });
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;

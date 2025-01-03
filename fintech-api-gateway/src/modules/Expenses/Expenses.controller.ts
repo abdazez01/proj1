@@ -4,6 +4,8 @@ import { createExpense, delExpenses, getAllExpensesPrice, getExpenses, updateExp
 import { getUserSalary } from "../user/user.service";
 import { updateExpenseInput } from "./Expenses.schema";
 
+
+
 export async function createExpenseHandler(request:FastifyRequest<{
     Body : createExpenseInput,
 }>,reply:FastifyReply) {
@@ -37,13 +39,14 @@ export async function salaryToExpensesHandler(request: FastifyRequest, reply: Fa
         const allPriceExpensesForUser = await getAllExpensesPrice(request.user.ID);
         const userSalaryResult = await getUserSalary(request.user.ID);
 
-   
         if (!userSalaryResult || userSalaryResult.Salary === 0) {
             return reply.status(400).send({ error: "Salary not found or is zero" });
         }
-
-       
-        const totalExpenses = allPriceExpensesForUser.reduce((sum, expense) => sum + expense.Price, 0);
+        const totalExpenses = allPriceExpensesForUser.reduce(
+            
+            (sum, expense) => sum + expense.Price * expense.Item_Count, 
+            0
+        );
 
         const percentage = (totalExpenses / userSalaryResult.Salary) * 100;
 

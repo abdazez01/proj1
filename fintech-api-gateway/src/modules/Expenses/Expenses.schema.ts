@@ -7,6 +7,7 @@ const expenseSchema = z.object({
     Price:z.number(),
     createdAt:z.date(),
     Category:z.string(),
+    Item_Count:z.number(),
 });
 
 const expenseccSchema = z.object({
@@ -14,6 +15,7 @@ const expenseccSchema = z.object({
   Price:z.number(),
   createdAt:z.date(),
   Category:z.string(),
+  Item_Count:z.number(),
 });
 
 const delExpenseSchema = z.object({
@@ -25,6 +27,7 @@ const updateExpenseSchema = z.object({
     ExpenseName: z.string().optional(),
     Price: z.number().optional(),
     Category:z.string().optional(),
+    Item_Count:z.number().optional(),
   });
   
 

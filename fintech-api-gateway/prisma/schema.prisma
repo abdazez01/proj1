@@ -43,6 +43,7 @@ model Expense {
   Account      Account  @relation(fields: [Account_ID], references: [ID])
   Account_ID   Int
   Category     String   @default("Other")
+  Item_Count  Int   @default(1)
 }
 
 model User_Info {

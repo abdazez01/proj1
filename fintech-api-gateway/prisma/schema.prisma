@@ -31,6 +31,7 @@ model Account {
   RecoveryCode       String?  // Stores the recovery code
   RecoveryExpiry     DateTime? // Expiry for the recovery code
   OCRs       OCR[]
+  Bonuse  Bonuses[]
   Expenses   Expense[]
   UserInfo   User_Info?
 }
@@ -55,4 +56,12 @@ model User_Info {
   Currency  String
   Gender    Boolean
   Account   Account @relation(fields: [ID], references: [ID])
+}
+
+model Bonuses{
+  Bonus_ID   Int      @id @default(autoincrement())
+  Amount  Float
+  Created_AT  DateTime
+  Account      Account  @relation(fields: [Account_ID], references: [ID])
+  Account_ID   Int
 }

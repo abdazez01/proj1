@@ -96,3 +96,18 @@ export async function updateUserVerification(Email:string,EmailVerified:boolean)
       data: {EmailVerified},
   });
 }
+
+export async function updateUserRecovryCode(Email:string,RecoveryCode:string) {
+  const RecoveryExpiry = new Date(Date.now() + 15 * 60 * 1000);
+  return prisma.account.update({
+      where: { Email },
+      data: {RecoveryCode,RecoveryExpiry,AskForRecovery:true},
+  });
+}
+
+export async function updateUserPass(Email:string,HashedPassword:string) {
+  return prisma.account.update({
+      where: { Email },
+      data: {HashedPassword,AskForRecovery:false},
+  });
+}

@@ -40,6 +40,7 @@ declare module "fastify"{
 }
 
 export const server = Fastify({
+  logger:true,
   https: {
     key,
     cert,

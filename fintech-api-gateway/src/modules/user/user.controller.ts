@@ -1,11 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, delUser, findUserByEmail, getUserInfo, getUserSalary, updateUserInfoInDatabase, updateUserVerification, updateUserVerificationCode } from "./user.service";
-import { createUserInput, loginInput, updateUserSchema, verifySentInput, verifyUserInput } from "./user.schema";
-import { comparePassword,generateVerificationCode } from "../../utils/hash";
+import { createUser, delUser, findUserByEmail, getUserInfo, getUserSalary, updateUserInfoInDatabase, updateUserPass, updateUserRecovryCode, updateUserVerification, updateUserVerificationCode } from "./user.service";
+import { createUserInput, loginInput, passRCInput, updateUserSchema, verifySentInput, verifyUserInput } from "./user.schema";
+import { comparePassword,generateVerificationCode, hashPassword } from "../../utils/hash";
 import { server } from "../..";
 import { delAllOCRForUser } from "../OCR/OCR.service";
 import { delAllExpensesForUser, getAllExpensesPrice } from "../Expenses/Expenses.service";
-import { sendVerificationEmail } from '../../utils/verification';
+import { sendRecoveryEmail, sendVerificationEmail } from '../../utils/verification';
 import { delAllBonusesForUser, getAllBonusesPrice } from "../Bonuses/Bonuses.service";
 
 export async function registerUserHandler(request:FastifyRequest<
@@ -225,4 +225,96 @@ export async function userFinHandler(request: FastifyRequest, reply: FastifyRepl
     } catch (error) {
         return reply.status(500).send({ error: "An error occurred while calculating percentage" });
     }
+}
+
+export async function recoverySenderHandler(request: FastifyRequest<
+    {
+        Body: verifySentInput
+    }
+    >, reply: FastifyReply) {        
+        const body= request.body
+
+        const user = await findUserByEmail(body.Email)
+
+        if(!user){
+            return reply.code(401).send({
+                message: "invalid email"
+            });
+        }
+        const code= generateVerificationCode();
+        try {
+            await updateUserRecovryCode(body.Email, code);
+            const EmailSent = await sendRecoveryEmail(body.Email,code)
+            return reply.code(201).send({EmailSent:EmailSent});
+        } catch (error) {
+            console.error(error);
+            return reply.status(500).send({ error: "An error occurred while updating user information." });
+        }
+
+    
+}
+
+export async function recoverUserHandler(
+    request: FastifyRequest<{
+        Body: passRCInput;
+    }>,
+    reply: FastifyReply
+) {
+    const body = request.body;
+
+    const now = Date.now();
+
+    const user = await findUserByEmail(body.Email);
+
+    if (!user) {
+        return reply.code(401).send({
+            message: "Invalid email",
+        });
+    }
+
+    if (user.AskForRecovery === false) {
+        console.log("Error");
+        return reply.code(401).send({
+            userRecoverd: false,
+        });
+    }
+
+    if (user.RecoveryExpiry === null) {
+        console.log("Verification code has expired or is invalid");
+        return reply.code(401).send({
+            userRecoverd: false,
+        });
+    }
+
+  
+
+    if (user.RecoveryCode !== body.Code.toLowerCase()) {
+        console.log("Invalid verification code");
+        return reply.code(401).send({
+ 
+            userRecoverd: false,
+        });
+    }
+
+    if (user.RecoveryExpiry.getTime() < now) {
+        console.log("Verification code has expired");
+
+        return reply.code(401).send({
+            userRecoverd: false,
+        });
+    }
+    const newps= await hashPassword(body.NewPassword);
+    const updatedUser = await updateUserPass(user.Email,newps);
+
+    if(!updatedUser){
+        console.log("Something Went Wrong");
+
+        return reply.code(401).send({
+            userRecoverd: false,
+        });
+    }
+
+    return reply.code(201).send({
+        userRecoverd: true,
+    });
 }

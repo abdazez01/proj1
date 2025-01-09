@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { delUserHandler, getUserInfoHandler, loginHandler, registerUserHandler, updateUserInfoHandler, userFinHandler, verificationSenderHandler, verifiyUserHandler } from "./user.controller";
+import { delUserHandler, getUserInfoHandler, loginHandler, recoverUserHandler, recoverySenderHandler, registerUserHandler, updateUserInfoHandler, userFinHandler, verificationSenderHandler, verifiyUserHandler } from "./user.controller";
 import { Schema } from "zod";
 import { $ref } from "./user.schema";
 async function userRoutes(server:FastifyInstance) {
@@ -75,6 +75,30 @@ server.get('/financialReport',{
         }
     }
 },userFinHandler)
+
+server.put('/sendRecoveryCode',
+    {
+     schema:{
+         body:$ref("verifySentSchema"),
+         response:{
+             201:$ref("verifySentResponseSchema"),
+         }
+     }
+    },
+ recoverySenderHandler)
+
+
+
+server.put('/resetPassword',
+    {
+     schema:{
+         body:$ref("recoverPassword"),
+         response:{
+             201:$ref("recoverUserResponseSchema"),
+         }
+     }
+    },
+    recoverUserHandler)
 
 }
 

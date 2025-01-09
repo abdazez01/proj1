@@ -93,13 +93,31 @@ export const verifyUserResponseSchema = z.object({
     Emailverify:z.boolean()
 });
 
-  const finInfoSchema = z.object({
+export const finInfoSchema = z.object({
     totalExpenses: z.number(),
     totalBonuses:z.number(),
     balance:z.number(),
     salary: z.number(),
     percentage:z.string(),
   });
+
+export const recoverPassword=z.object({
+    Email: z.string(
+        {
+            required_error: 'Email is required',
+            invalid_type_error: 'Email must be a string'
+        }
+    ).email(),
+    NewPassword :z.string(        {
+        required_error: 'Password is required',
+        invalid_type_error: 'Password must be a string'
+    }),
+    Code:z.string()
+})
+
+export const recoverUserResponseSchema = z.object({
+    userRecoverd:z.boolean()
+});
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 
@@ -110,6 +128,8 @@ export type loginInput = z.infer<typeof loginSchema>;
 export type verifySentInput = z.infer<typeof verifySentSchema>;
 
 export type verifyUserInput = z.infer<typeof verifyUserSchema>;
+
+export type passRCInput = z.infer<typeof recoverPassword>;
 
 
 export const {schemas:userSchema, $ref}= buildJsonSchemas({
@@ -123,5 +143,7 @@ export const {schemas:userSchema, $ref}= buildJsonSchemas({
     verifySentResponseSchema,
     verifyUserResponseSchema,
     verifyUserSchema,
-    finInfoSchema
+    finInfoSchema,
+    recoverPassword,
+    recoverUserResponseSchema
 },{ $id: "UserSchema" });

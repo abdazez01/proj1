@@ -27,4 +27,21 @@ export async function sendVerificationEmail(to:string, code:string) {
     }
 }
 
+export async function sendRecoveryEmail(to: string, code: string) {
+    try {
+        await transporter.sendMail({
+            from: '"Wazen" <recovery@Wazen.com>',
+            to,
+            subject: 'Password Recovery',
+            text: `Your password recovery code is ${code}`,
+            html: `<p>Your password recovery code is <b>${code}</b></p>`,
+        });
+        console.log("Recovery email sent successfully");
+        return true;
+    } catch (e) {
+        console.error('Error sending recovery email:', e);
+        return false;
+    }
+}
+
 

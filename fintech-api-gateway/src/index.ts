@@ -12,6 +12,8 @@ import {withRefResolver}from 'fastify-zod';
 import expensesHandler from './modules/Expenses/Expenses.route';
 import { expensesSchema } from './modules/Expenses/Expenses.schema';
 import cors from '@fastify/cors';
+import { generateVerificationCode } from './utils/hash';
+import { sendVerificationEmail } from './utils/verification';
 // Load environment variables from .env
 dotenv.config();
 
@@ -67,6 +69,7 @@ server.register(cors, {
 server.get("/isok",async function() {
   return {status:"OK"};
 });
+
 
 async function main() {
 

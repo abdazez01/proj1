@@ -5,3 +5,7 @@ yarn dev to run
 
 Migrate the schema
 npx prisma migrate dev --name init
+
+
+added
+yarn add nodemailer crypto

@@ -81,3 +81,18 @@ export async function updateUserInfoInDatabase(ID: number, updates: Record<strin
       data: updates,
   });
 }
+
+export async function updateUserVerificationCode(Email:string,VerificationCode:string) {
+  const VerificationExpiry = new Date(Date.now() + 15 * 60 * 1000);
+  return prisma.account.update({
+      where: { Email },
+      data: {VerificationCode,VerificationExpiry},
+  });
+}
+
+export async function updateUserVerification(Email:string,EmailVerified:boolean) {
+  return prisma.account.update({
+      where: { Email },
+      data: {EmailVerified},
+  });
+}

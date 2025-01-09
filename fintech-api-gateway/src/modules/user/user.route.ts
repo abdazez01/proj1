@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { delUserHandler, getUserInfoHandler, loginHandler, registerUserHandler, updateUserInfoHandler } from "./user.controller";
+import { delUserHandler, getUserInfoHandler, loginHandler, registerUserHandler, updateUserInfoHandler, verificationSenderHandler, verifiyUserHandler } from "./user.controller";
 import { Schema } from "zod";
 import { $ref } from "./user.schema";
 async function userRoutes(server:FastifyInstance) {
@@ -44,9 +44,31 @@ server.put('/update',{preHandler: [server.authenticate],
     }
 },updateUserInfoHandler)
 
-}
+server.put('/sendVerificationCode',
+   {
+    schema:{
+        body:$ref("verifySentSchema"),
+        response:{
+            201:$ref("verifySentResponseSchema"),
+        }
+    }
+   },
+verificationSenderHandler)
 
 
+
+server.put('/verify',
+    {
+     schema:{
+         body:$ref("verifyUserSchema"),
+         response:{
+             201:$ref("verifyUserResponseSchema"),
+         }
+     }
+    },
+verifiyUserHandler)
+ 
+ }
 
 
 export default userRoutes

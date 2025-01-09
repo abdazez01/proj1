@@ -1,10 +1,11 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, delUser, findUserByEmail, getUserInfo, updateUserInfoInDatabase } from "./user.service";
-import { createUserInput, loginInput, updateUserSchema } from "./user.schema";
-import { comparePassword } from "../../utils/hash";
+import { createUser, delUser, findUserByEmail, getUserInfo, updateUserInfoInDatabase, updateUserVerification, updateUserVerificationCode } from "./user.service";
+import { createUserInput, loginInput, updateUserSchema, verifySentInput, verifyUserInput } from "./user.schema";
+import { comparePassword,generateVerificationCode } from "../../utils/hash";
 import { server } from "../..";
 import { delAllOCRForUser } from "../OCR/OCR.service";
 import { delAllExpensesForUser } from "../Expenses/Expenses.service";
+import { sendVerificationEmail } from '../../utils/verification';
 
 export async function registerUserHandler(request:FastifyRequest<
     {
@@ -37,6 +38,12 @@ export async function loginHandler(request:FastifyRequest<
         if(!user){
             return reply.code(401).send({
                 message: "invalid email"
+            });
+        }
+
+        if(!user.EmailVerified){
+            return reply.code(401).send({
+                message: "plz Verifiy your email"
             });
         }
 
@@ -83,7 +90,7 @@ return reply.code(201).send({
 }
 
 export async function updateUserInfoHandler(request: FastifyRequest, reply: FastifyReply) {
-    // Get ID from JWT (assuming `request.user` is populated by your authentication middleware)
+
     const ID = request.user.ID;
 
     const parsedResult = updateUserSchema.safeParse(request.body);
@@ -101,4 +108,86 @@ export async function updateUserInfoHandler(request: FastifyRequest, reply: Fast
         console.error(error);
         return reply.status(500).send({ error: "An error occurred while updating user information." });
     }
+}
+
+export async function verificationSenderHandler(request: FastifyRequest<
+    {
+        Body: verifySentInput
+    }
+    >, reply: FastifyReply) {        
+        const body= request.body
+
+        const user = await findUserByEmail(body.Email)
+
+        if(!user){
+            return reply.code(401).send({
+                message: "invalid email"
+            });
+        }
+        const code= generateVerificationCode();
+        try {
+            await updateUserVerificationCode(body.Email, code);
+            const EmailSent = await sendVerificationEmail(body.Email,code)
+            return reply.code(201).send({EmailSent:EmailSent});
+        } catch (error) {
+            console.error(error);
+            return reply.status(500).send({ error: "An error occurred while updating user information." });
+        }
+
+    
+}
+
+export async function verifiyUserHandler(
+    request: FastifyRequest<{
+        Body: verifyUserInput;
+    }>,
+    reply: FastifyReply
+) {
+    const body = request.body;
+
+    const now = Date.now();
+
+    const user = await findUserByEmail(body.Email);
+
+    if (!user) {
+        return reply.code(401).send({
+            message: "Invalid email",
+        });
+    }
+
+    if (user.VerificationExpiry === null) {
+        console.log("Verification code has expired or is invalid");
+        return reply.code(401).send({
+            Emailverify: false,
+        });
+    }
+
+    if (user.VerificationCode !== body.Code) {
+        console.log("Invalid verification code");
+        return reply.code(401).send({
+ 
+            Emailverify: false,
+        });
+    }
+
+    if (user.VerificationExpiry.getTime() < now) {
+        console.log("Verification code has expired");
+
+        return reply.code(401).send({
+            Emailverify: false,
+        });
+    }
+    const updatedUser = await updateUserVerification(user.Email,true);
+
+    if(!updatedUser){
+        console.log("Something Went Wrong");
+
+        return reply.code(401).send({
+            Emailverify: false,
+        });
+    }
+
+    return reply.code(201).send({
+        Emailverify: true,
+    });
 }

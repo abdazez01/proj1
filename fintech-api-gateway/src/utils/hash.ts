@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import bcryptjs from 'bcryptjs';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -12,3 +13,7 @@ export const hashPassword = async (password: string) => {
 
 export const comparePassword = async (password: string, hash: string) =>
   bcryptjs.compare(password, hash);
+
+export function generateVerificationCode() {
+  return crypto.randomBytes(3).toString('hex');
+}

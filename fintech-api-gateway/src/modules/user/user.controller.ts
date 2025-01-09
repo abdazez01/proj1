@@ -42,7 +42,7 @@ export async function loginHandler(request:FastifyRequest<
         }
 
         if(!user.EmailVerified){
-            return reply.code(402).send({
+            return reply.code(403).send({
                 message: "plz Verify your email"
             });
         }

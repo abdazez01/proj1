@@ -15,5 +15,5 @@ export const comparePassword = async (password: string, hash: string) =>
   bcryptjs.compare(password, hash);
 
 export function generateVerificationCode() {
-  return crypto.randomBytes(3).toString('hex');
+  return crypto.randomBytes(3).toString('hex').toLowerCase();
 }

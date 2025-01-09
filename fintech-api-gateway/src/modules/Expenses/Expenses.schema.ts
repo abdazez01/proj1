@@ -31,11 +31,7 @@ const updateExpenseSchema = z.object({
   });
   
 
-  const Tosal = z.object({
-    totalExpenses: z.number(),
-    salary: z.number(),
-    percentage:z.string(),
-  });
+
 
 
 const expensesResponseSchema = z.array(expenseSchema);
@@ -50,5 +46,5 @@ expensesResponseSchema,
 delExpenseSchema,
 updateExpenseSchema,
 expenseccSchema,
-Tosal
+
 },{ $id: "ExpenseSchema" });

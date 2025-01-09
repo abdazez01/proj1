@@ -14,14 +14,13 @@ import { expensesSchema } from './modules/Expenses/Expenses.schema';
 import cors from '@fastify/cors';
 import { generateVerificationCode } from './utils/hash';
 import { sendVerificationEmail } from './utils/verification';
-// Load environment variables from .env
+import { bonusesSchema } from './modules/Bonuses/Bonuses.schema';
+
 dotenv.config();
 
-// SSL certificate and key
 const key = fs.readFileSync('./cert/root.key');
 const cert = fs.readFileSync('./cert/root.crt');
 
-// Initialize Prisma Client
 const prisma = new PrismaClient();
 
 declare module "@fastify/jwt"{
@@ -73,7 +72,7 @@ server.get("/isok",async function() {
 
 async function main() {
 
-  for(const schema of [...userSchema,...expensesSchema]){
+  for(const schema of [...userSchema,...expensesSchema,...bonusesSchema]){
     server.addSchema(schema);
   }
 
@@ -92,7 +91,7 @@ async function main() {
   });
 
   server.register(swaggerui, {
-    routePrefix: '/docs', // This serves Swagger UI at /docs
+    routePrefix: '/docs', 
     
     staticCSP: true,
     
@@ -103,6 +102,7 @@ async function main() {
 
   server.register(userRoutes, {prefix: '/user'})
   server.register(expensesHandler,{prefix: '/expenses'})
+  server.register(userRoutes, {prefix: '/bonuses'})
 
 // Start the server
 const start = async () => {

@@ -1,11 +1,12 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createUser, delUser, findUserByEmail, getUserInfo, updateUserInfoInDatabase, updateUserVerification, updateUserVerificationCode } from "./user.service";
+import { createUser, delUser, findUserByEmail, getUserInfo, getUserSalary, updateUserInfoInDatabase, updateUserVerification, updateUserVerificationCode } from "./user.service";
 import { createUserInput, loginInput, updateUserSchema, verifySentInput, verifyUserInput } from "./user.schema";
 import { comparePassword,generateVerificationCode } from "../../utils/hash";
 import { server } from "../..";
 import { delAllOCRForUser } from "../OCR/OCR.service";
-import { delAllExpensesForUser } from "../Expenses/Expenses.service";
+import { delAllExpensesForUser, getAllExpensesPrice } from "../Expenses/Expenses.service";
 import { sendVerificationEmail } from '../../utils/verification';
+import { delAllBonusesForUser, getAllBonusesPrice } from "../Bonuses/Bonuses.service";
 
 export async function registerUserHandler(request:FastifyRequest<
     {
@@ -41,17 +42,15 @@ export async function loginHandler(request:FastifyRequest<
             });
         }
 
-        if(!user.EmailVerified){
-            return reply.code(403).send({
-                message: "plz Verify your email"
-            });
-        }
-
         const correctPassword = await comparePassword(body.HashedPassword,user.HashedPassword)
 
         if(correctPassword){
             const {HashedPassword,...rest}=user
-
+            if(!user.EmailVerified){
+                return reply.code(403).send({
+                    message: "plz Verify your email"
+                });
+            }
             return {accessToken: server.jwt.sign(rest)}
         }
     else{
@@ -77,6 +76,7 @@ export async function delUserHandler(request:FastifyRequest,reply:FastifyReply)
 {try{
     const delOcr = await delAllOCRForUser(request.user.ID)
     const delExpenses = await delAllExpensesForUser(request.user.ID)
+    const delBonuses = await delAllBonusesForUser(request.user.ID)
     const delUsere = await delUser(request.user.ID)
 
 return reply.code(201).send({
@@ -162,7 +162,7 @@ export async function verifiyUserHandler(
         });
     }
 
-    if (user.VerificationCode !== body.Code) {
+    if (user.VerificationCode !== body.Code.toLowerCase()) {
         console.log("Invalid verification code");
         return reply.code(401).send({
  
@@ -190,4 +190,39 @@ export async function verifiyUserHandler(
     return reply.code(201).send({
         Emailverify: true,
     });
+}
+
+export async function userFinHandler(request: FastifyRequest, reply: FastifyReply) {
+    try {
+        const allPriceExpensesForUser = await getAllExpensesPrice(request.user.ID);
+        const userSalaryResult = await getUserSalary(request.user.ID);
+        const allPriceBonusesForUser = await getAllBonusesPrice(request.user.ID);
+
+        if (!userSalaryResult ||!allPriceBonusesForUser|| userSalaryResult.Salary === 0) {
+            return reply.status(400).send({ error: "Salary not found or is zero" });
+        }
+        const totalExpenses = allPriceExpensesForUser.reduce(
+            
+            (sum, expense) => sum + expense.Price * expense.Item_Count, 
+            0
+        );
+
+        const totalBonuses = allPriceBonusesForUser.reduce(
+            
+            (sum, bonus) => sum +  bonus.Amount ,0
+        );
+        const percentage = (totalExpenses / (userSalaryResult.Salary+totalBonuses)) * 100;
+        const balance =((userSalaryResult.Salary+totalBonuses)-(totalExpenses));
+
+
+        return reply.code(201).send({
+            totalExpenses,
+            totalBonuses,
+            balance,
+            salary: userSalaryResult.Salary,
+            percentage: percentage.toFixed(2),
+        });
+    } catch (error) {
+        return reply.status(500).send({ error: "An error occurred while calculating percentage" });
+    }
 }

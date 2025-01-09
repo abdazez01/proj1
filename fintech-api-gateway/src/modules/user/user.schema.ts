@@ -93,6 +93,13 @@ export const verifyUserResponseSchema = z.object({
     Emailverify:z.boolean()
 });
 
+  const finInfoSchema = z.object({
+    totalExpenses: z.number(),
+    totalBonuses:z.number(),
+    balance:z.number(),
+    salary: z.number(),
+    percentage:z.string(),
+  });
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 
@@ -115,5 +122,6 @@ export const {schemas:userSchema, $ref}= buildJsonSchemas({
     verifySentSchema,
     verifySentResponseSchema,
     verifyUserResponseSchema,
-    verifyUserSchema
+    verifyUserSchema,
+    finInfoSchema
 },{ $id: "UserSchema" });

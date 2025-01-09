@@ -1,7 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { createExpenseInput, delExpenseInput } from "./Expenses.schema";
-import { createExpense, delExpenses, getAllExpensesPrice, getExpenses, updateExpense } from "./Expenses.service";
-import { getUserSalary } from "../user/user.service";
+import { createExpense, delExpens, getAllExpensesPrice, getExpenses, updateExpense } from "./Expenses.service";
 import { updateExpenseInput } from "./Expenses.schema";
 
 
@@ -34,35 +33,11 @@ export async function getExpensesHandler(request:FastifyRequest,reply:FastifyRep
     }
 };
 
-export async function salaryToExpensesHandler(request: FastifyRequest, reply: FastifyReply) {
-    try {
-        const allPriceExpensesForUser = await getAllExpensesPrice(request.user.ID);
-        const userSalaryResult = await getUserSalary(request.user.ID);
 
-        if (!userSalaryResult || userSalaryResult.Salary === 0) {
-            return reply.status(400).send({ error: "Salary not found or is zero" });
-        }
-        const totalExpenses = allPriceExpensesForUser.reduce(
-            
-            (sum, expense) => sum + expense.Price * expense.Item_Count, 
-            0
-        );
 
-        const percentage = (totalExpenses / userSalaryResult.Salary) * 100;
-
-        return reply.code(201).send({
-            totalExpenses,
-            salary: userSalaryResult.Salary,
-            percentage: percentage.toFixed(2),
-        });
-    } catch (error) {
-        return reply.status(500).send({ error: "An error occurred while calculating percentage" });
-    }
-}
-
-export async function delExpensesHandler(request:FastifyRequest<{Body:delExpenseInput}>,reply:FastifyReply) 
+export async function delExpensHandler(request:FastifyRequest<{Body:delExpenseInput}>,reply:FastifyReply) 
 {try{
-const delExpense = await delExpenses(request.body.Expense_ID);
+const delExpense = await delExpens(request.body.Expense_ID);
 if(delExpense){
 return reply.code(201).send({message:"Expense deleted successfully"});  }
 else{

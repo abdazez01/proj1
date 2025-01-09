@@ -47,7 +47,7 @@ export async function delAllExpensesForUser(owener_ID:number){
     });
   };
 
-  export async function delExpenses(expense_ID:number) {
+  export async function delExpens(expense_ID:number) {
     const expenses = await prisma.expense.deleteMany({
         where:{
             Expense_ID:expense_ID

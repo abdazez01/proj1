@@ -15,6 +15,7 @@ import cors from '@fastify/cors';
 import { generateVerificationCode } from './utils/hash';
 import { sendVerificationEmail } from './utils/verification';
 import { bonusesSchema } from './modules/Bonuses/Bonuses.schema';
+import bonusesRoutes from './modules/Bonuses/Bonuses.route';
 
 dotenv.config();
 
@@ -102,7 +103,7 @@ async function main() {
 
   server.register(userRoutes, {prefix: '/user'})
   server.register(expensesHandler,{prefix: '/expenses'})
-  server.register(userRoutes, {prefix: '/bonuses'})
+  server.register(bonusesRoutes, {prefix: '/bonuses'})
 
 // Start the server
 const start = async () => {

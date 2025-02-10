@@ -16,6 +16,10 @@ import { generateVerificationCode } from './utils/hash';
 import { sendVerificationEmail } from './utils/verification';
 import { bonusesSchema } from './modules/Bonuses/Bonuses.schema';
 import bonusesRoutes from './modules/Bonuses/Bonuses.route';
+import axios from 'axios';
+import fastifyMultipart from '@fastify/multipart';
+import oCRRoutes from './modules/OCR/OCR.route';
+import { ocrsSchema } from './modules/OCR/OCR.schema';
 
 dotenv.config();
 
@@ -41,8 +45,8 @@ declare module "fastify"{
 
 export const server = Fastify({
   logger:true,
-  https: {
-    key,
+ https: {
+  key,
     cert,
   },
 });
@@ -62,10 +66,12 @@ server.decorate("authenticate", async (request:FastifyRequest,reply:FastifyReply
 });
 
 server.register(cors, { 
-  origin: 'http://localhost:8081',
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: '*', 
 });
+
+server.register(fastifyMultipart);
 
 server.get("/isok",async function() {
   return {status:"OK"};
@@ -74,7 +80,7 @@ server.get("/isok",async function() {
 
 async function main() {
 
-  for(const schema of [...userSchema,...expensesSchema,...bonusesSchema]){
+  for(const schema of [...userSchema,...expensesSchema,...bonusesSchema,...ocrsSchema]){
     server.addSchema(schema);
   }
 
@@ -105,6 +111,8 @@ async function main() {
   server.register(userRoutes, {prefix: '/user'})
   server.register(expensesHandler,{prefix: '/expenses'})
   server.register(bonusesRoutes, {prefix: '/bonuses'})
+  server.register(oCRRoutes, {prefix: '/OCR'})
+
 
 // Start the server
 const start = async () => {

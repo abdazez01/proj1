@@ -58,6 +58,17 @@ const loginResponseSchema = z.object({
  accessToken: z.string(),
 });
 
+const recommendSchema = z.object({
+    "Ticker": z.string(),
+    "Close": z.number(),
+    "Prob_Buy": z.number(),
+    "Date": z.date()
+});
+
+const recommendedSchema = z.object({
+    "Recommendations":z.array(recommendSchema)
+});
+
 export const updateUserSchema = z.object({
     UserName: z.string().optional(),
     Location: z.string().optional(),
@@ -145,5 +156,6 @@ export const {schemas:userSchema, $ref}= buildJsonSchemas({
     verifyUserSchema,
     finInfoSchema,
     recoverPassword,
-    recoverUserResponseSchema
+    recoverUserResponseSchema,
+    recommendedSchema
 },{ $id: "UserSchema" });

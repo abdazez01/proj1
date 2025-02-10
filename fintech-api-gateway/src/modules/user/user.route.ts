@@ -1,5 +1,5 @@
 import { FastifyInstance } from "fastify";
-import { delUserHandler, getUserInfoHandler, loginHandler, recoverUserHandler, recoverySenderHandler, registerUserHandler, updateUserInfoHandler, userFinHandler, verificationSenderHandler, verifiyUserHandler } from "./user.controller";
+import { delUserHandler, getUserInfoHandler, loginHandler, recommendUserHandler, recoverUserHandler, recoverySenderHandler, registerUserHandler, updateUserInfoHandler, userFinHandler, verificationSenderHandler, verifiyUserHandler } from "./user.controller";
 import { Schema } from "zod";
 import { $ref } from "./user.schema";
 async function userRoutes(server:FastifyInstance) {
@@ -29,18 +29,48 @@ server.get('/fetchInfo',{
     schema:{
         response:{
             201:$ref("returnuserinfo"),
-        }
+        },
+        headers: {
+            type: 'object',
+            properties: {
+              authorization: { 
+                type: 'string', 
+                pattern: '^Bearer\\s.+$'
+              }
+            },
+            required: ['authorization']
+          }
     }
 },getUserInfoHandler)
 
-server.delete('/delete',{preHandler: [server.authenticate]},delUserHandler);
+server.delete('/delete',{preHandler: [server.authenticate],schema:{ 
+     headers: {
+    type: 'object',
+    properties: {
+      authorization: { 
+        type: 'string', 
+        pattern: '^Bearer\\s.+$'
+      }
+    },
+    required: ['authorization']
+  }}},delUserHandler);
 
 server.put('/update',{preHandler: [server.authenticate],
     schema:{
         body: $ref("updateUserSchema"),
         response:{
             201:$ref("updateUserSchema"),
-        }
+        },
+        headers: {
+            type: 'object',
+            properties: {
+              authorization: { 
+                type: 'string', 
+                pattern: '^Bearer\\s.+$'
+              }
+            },
+            required: ['authorization']
+          }
     }
 },updateUserInfoHandler)
 
@@ -72,7 +102,17 @@ server.get('/financialReport',{
     schema:{
         response:{
             201:$ref("finInfoSchema"),
-        }
+        },
+        headers: {
+            type: 'object',
+            properties: {
+              authorization: { 
+                type: 'string', 
+                pattern: '^Bearer\\s.+$'
+              }
+            },
+            required: ['authorization']
+          }
     }
 },userFinHandler)
 
@@ -99,6 +139,25 @@ server.put('/resetPassword',
      }
     },
     recoverUserHandler)
+
+server.get('/recommend',{
+    preHandler: [server.authenticate],
+    schema:{
+        response:{
+            201:$ref("recommendedSchema")
+        },
+        headers: {
+            type: 'object',
+            properties: {
+              authorization: { 
+                type: 'string', 
+                pattern: '^Bearer\\s.+$'
+              }
+            },
+            required: ['authorization']
+          }
+    }
+},recommendUserHandler)
 
 }
 

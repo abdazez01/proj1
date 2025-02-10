@@ -17,7 +17,7 @@ model OCR {
   Report_ID Int      @id @default(autoincrement())
   Account   Account  @relation(fields: [Account_ID], references: [ID])
   Account_ID Int
-  CSV_Path  String
+  Image      String  @db.Text
 }
 
 model Account {

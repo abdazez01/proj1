@@ -11,7 +11,18 @@ async function bonusesRoutes(server:FastifyInstance) {
                 body: $ref("bonusSchema"),
                 response:{
                     201:$ref("bonusResponseSchema"),
+                },
+                headers: {
+                  type: 'object',
+                  properties: {
+                    authorization: { 
+                      type: 'string', 
+                      pattern: '^Bearer\\s.+$'
+                    }
+                  },
+                  required: ['authorization']
                 }
+              
             }
         
      },createBonusHandler)
@@ -21,7 +32,17 @@ async function bonusesRoutes(server:FastifyInstance) {
            schema:{
                response:{
                    201:$ref("bonusResponsesSchema"),
-               }
+               },
+               headers: {
+                type: 'object',
+                properties: {
+                  authorization: { 
+                    type: 'string', 
+                    pattern: '^Bearer\\s.+$'
+                  }
+                },
+                required: ['authorization']
+              }
            }
    
    },getBonusesHandler)    
@@ -37,6 +58,16 @@ async function bonusesRoutes(server:FastifyInstance) {
         response: {
           201: $ref("bonusResponseSchema"),
         },
+        headers: {
+          type: 'object',
+          properties: {
+            authorization: { 
+              type: 'string', 
+              pattern: '^Bearer\\s.+$'
+            }
+          },
+          required: ['authorization']
+        }
       },
     },
     updateBonusHandler

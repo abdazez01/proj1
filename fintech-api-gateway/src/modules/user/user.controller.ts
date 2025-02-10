@@ -7,6 +7,7 @@ import { delAllOCRForUser } from "../OCR/OCR.service";
 import { delAllExpensesForUser, getAllExpensesPrice } from "../Expenses/Expenses.service";
 import { sendRecoveryEmail, sendVerificationEmail } from '../../utils/verification';
 import { delAllBonusesForUser, getAllBonusesPrice } from "../Bonuses/Bonuses.service";
+import axios from 'axios';
 
 export async function registerUserHandler(request:FastifyRequest<
     {
@@ -317,4 +318,15 @@ export async function recoverUserHandler(
     return reply.code(201).send({
         userRecoverd: true,
     });
+}
+
+export async function recommendUserHandler(request: FastifyRequest, reply: FastifyReply){
+    try {
+        const response = await axios.get('http://localhost:8080/', {
+            headers: { Origin: 'https://localhost:3000' }
+          });
+        reply.code(201).send(response.data);
+      } catch (error: any) {
+        reply.code(500).send({ error });
+      }
 }

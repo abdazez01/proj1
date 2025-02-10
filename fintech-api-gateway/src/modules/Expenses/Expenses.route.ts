@@ -9,6 +9,15 @@ export default async function expensesHandler(server:FastifyInstance) {
                 body: $ref("expenseccSchema"),
                 response:{
                     201:$ref("expenseSchema"),
+                },                headers: {
+                  type: 'object',
+                  properties: {
+                    authorization: { 
+                      type: 'string', 
+                      pattern: '^Bearer\\s.+$'
+                    }
+                  },
+                  required: ['authorization']
                 }
             }
     
@@ -19,7 +28,16 @@ export default async function expensesHandler(server:FastifyInstance) {
            schema:{
                response:{
                    201:$ref("expensesResponseSchema"),
-               }
+               },                headers: {
+                type: 'object',
+                properties: {
+                  authorization: { 
+                    type: 'string', 
+                    pattern: '^Bearer\\s.+$'
+                  }
+                },
+                required: ['authorization']
+              }
            }
    
    },getExpensesHandler)
@@ -36,6 +54,16 @@ export default async function expensesHandler(server:FastifyInstance) {
         response: {
           201: $ref("expenseSchema"),
         },
+        headers: {
+          type: 'object',
+          properties: {
+            authorization: { 
+              type: 'string', 
+              pattern: '^Bearer\\s.+$'
+            }
+          },
+          required: ['authorization']
+        }
       },
     },
     updateExpenseHandler

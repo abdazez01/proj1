@@ -42,7 +42,7 @@ export async function uploadImageHandler(request: FastifyRequest, reply: Fastify
     try {
       const buffer = await streamToBuffer(data.file);
       const base64Data = buffer.toString('base64');
-
+      await addImageToOCR(request.user.ID,base64Data);
       const imageclass = await sendImageAsFileForClass(buffer)
       if (!imageclass.detections?.length) {
         return reply.code(404).send({ message: "No detections found" });

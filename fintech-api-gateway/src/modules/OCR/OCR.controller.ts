@@ -7,7 +7,7 @@ import { sendRecoveryEmail, sendVerificationEmail } from '../../utils/verificati
 import { delAllBonusesForUser, getAllBonusesPrice } from "../Bonuses/Bonuses.service";
 import axios, { AxiosResponse } from 'axios';
 import { streamToBuffer } from '../../utils/Image'; 
-import { getImageinput } from "./OCR.schema";
+import { getImageinput, sendImageinput } from "./OCR.schema";
 import FormData from 'form-data';
 
 interface Detection {
@@ -32,18 +32,16 @@ interface Detection {
   }
 
 
-export async function uploadImageHandler(request: FastifyRequest, reply: FastifyReply) {
-    const data = await request.file();
+export async function uploadImageHandler(request: FastifyRequest<{Body:sendImageinput}>, reply: FastifyReply) {
+    const base64Data = request.body.ImageInBase64
   
-    if (!data) {
+    if (!base64Data) {
       return reply.code(400).send({ message: 'No file uploaded' });
     }
   
     try {
-      const buffer = await streamToBuffer(data.file);
-      const base64Data = buffer.toString('base64');
       await addImageToOCR(request.user.ID,base64Data);
-      const imageclass = await sendImageAsFileForClass(buffer)
+      const imageclass = await sendImageAsFileForClass(Buffer.from(base64Data, 'base64'))
       if (!imageclass.detections?.length) {
         return reply.code(404).send({ message: "No detections found" });
       }
@@ -79,6 +77,11 @@ export async function uploadImageHandler(request: FastifyRequest, reply: Fastify
               createdAt: new Date(now)
             });
           }
+          if(!responss){
+            return reply.code(405).send({ message: "No detections found" });
+          }
+          console.log("\n\n\n"+responss+"\n\n\n")
+
             return reply.code(201).send({
         responss
       });

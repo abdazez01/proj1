@@ -7,25 +7,7 @@ import { $ref } from "./OCR.schema";
   server.post('/uploadImage', {
     preHandler: [server.authenticate],
     schema: {
-      openapi: {
-        requestBody: {
-          content: {
-            'multipart/form-data': {
-              schema: {
-                type: 'object',
-                properties: {
-                  file: {
-                    type: 'string',
-                    format: 'binary',
-                    description: 'Image file to upload'
-                  }
-                },
-                required: ['file']
-              }
-            }
-          }
-        }
-      },
+body:$ref('sendImageSchema'),
       response: {
         201: $ref('ocrresponsSchema')
       },

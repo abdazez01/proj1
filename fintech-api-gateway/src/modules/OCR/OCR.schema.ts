@@ -5,6 +5,10 @@ export const getImageSchema = z.object({
     Id:z.number()
 });
 
+export const sendImageSchema = z.object({
+  ImageInBase64:z.string()
+});
+
 const ocrSchema = z.object({
     ExpenseName:z.string(),
     Price:z.number(),
@@ -16,8 +20,10 @@ const ocrSchema = z.object({
     responss:z.array(ocrSchema)
   })
 export type getImageinput = z.infer<typeof getImageSchema>;
+export type sendImageinput = z.infer<typeof sendImageSchema>;
+
 
 export const {schemas:ocrsSchema, $ref}= buildJsonSchemas({
-    ocrresponsSchema
-    
+    ocrresponsSchema,
+    sendImageSchema
     },{ $id: "ocrSchema" });

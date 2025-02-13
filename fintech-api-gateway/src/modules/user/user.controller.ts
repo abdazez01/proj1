@@ -322,9 +322,7 @@ export async function recoverUserHandler(
 
 export async function recommendUserHandler(request: FastifyRequest, reply: FastifyReply){
     try {
-        const response = await axios.get('http://localhost:8080/', {
-            headers: { Origin: 'https://localhost:3000' }
-          });
+        const response = await axios.get('http://host.docker.internal:8080/');
         reply.code(201).send(response.data);
       } catch (error: any) {
         reply.code(500).send({ error });

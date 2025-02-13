@@ -115,7 +115,7 @@ export async function uploadImageHandler(request: FastifyRequest<{Body:sendImage
     });
   
     try {
-      const response = await axios.post('http://0.0.0.0:8000/predict/', form, {
+      const response = await axios.post('http://host.docker.internal:8000/predict/', form, {
         headers: {
           ...form.getHeaders(),
         },
@@ -136,7 +136,7 @@ export async function uploadImageHandler(request: FastifyRequest<{Body:sendImage
     });
   
     try {
-      const response = await axios.post('http://0.0.0.0:8001/ocr/', form, {
+      const response = await axios.post('http://host.docker.internal:8001/ocr/', form, {
         headers: {
           ...form.getHeaders(),
         },
@@ -155,7 +155,7 @@ export async function uploadImageHandler(request: FastifyRequest<{Body:sendImage
     count: number;
   }> {
     try {
-      const response = await axios.post('http://0.0.0.0:8002/predict', {
+      const response = await axios.post('http://host.docker.internal:8002/predict', {
         text: text  
       }, {
         headers: {

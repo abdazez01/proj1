@@ -1,0 +1,43 @@
+version: '3'
+services:
+  app1:
+    build: .
+    environment:
+      - APP_NAME=App1
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/fintech_gateway?sslmode=require&sslcert=../cert/root.crt
+      - PASSWORD_SALT=8
+      - SECRET_KEY=sgfhjuhnhjuihhmmkiughjkiuyhnhjjkiuyuhjjklopoo
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=465
+      - SMTP_USER=abazaraki@gmail.com
+      - SMTP_PASS=olci wkfp zhbd zlzl
+    ports:
+      - "3001:3000"
+
+  app2:
+    build: .
+    environment:
+      - APP_NAME=App2
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/fintech_gateway?sslmode=require&sslcert=../cert/root.crt
+      - PASSWORD_SALT=8
+      - SECRET_KEY=sgfhjuhnhjuihhmmkiughjkiuyhnhjjkiuyuhjjklopoo
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=465
+      - SMTP_USER=abazaraki@gmail.com
+      - SMTP_PASS=olci wkfp zhbd zlzl
+    ports:
+      - "3002:3000"
+
+  app3:
+    build: .
+    environment:
+      - APP_NAME=App3
+      - DATABASE_URL=postgresql://postgres:postgres@host.docker.internal:5432/fintech_gateway?sslmode=require&sslcert=../cert/root.crt
+      - PASSWORD_SALT=8
+      - SECRET_KEY=sgfhjuhnhjuihhmmkiughjkiuyhnhjjkiuyuhjjklopoo
+      - SMTP_HOST=smtp.gmail.com
+      - SMTP_PORT=465
+      - SMTP_USER=abazaraki@gmail.com
+      - SMTP_PASS=olci wkfp zhbd zlzl
+    ports:
+      - "3003:3000"

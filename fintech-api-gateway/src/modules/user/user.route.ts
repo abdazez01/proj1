@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { delUserHandler, getUserInfoHandler, loginHandler, recommendUserHandler, recoverUserHandler, recoverySenderHandler, registerUserHandler, updateUserInfoHandler, userFinHandler, verificationSenderHandler, verifiyUserHandler } from "./user.controller";
-import { Schema } from "zod";
+import { chatrHandler, delUserHandler, getUserInfoHandler, loginHandler, recommendUserHandler, recoverUserHandler, recoverySenderHandler, registerUserHandler, updateUserInfoHandler, userFinHandler, verificationSenderHandler, verifiyUserHandler } from "./user.controller";
+import { Schema, string } from "zod";
 import { $ref } from "./user.schema";
 async function userRoutes(server:FastifyInstance) {
     
@@ -158,6 +158,27 @@ server.get('/recommend',{
           }
     }
 },recommendUserHandler)
+
+
+server.post("/chat",{
+    preHandler: [server.authenticate],
+    schema:{
+        body:$ref('noooooSchema'),
+        response:{
+            201:$ref('DeepSeekAPIResponseSchema')
+        },
+        headers: {
+            type: 'object',
+            properties: {
+              authorization: { 
+                type: 'string', 
+                pattern: '^Bearer\\s.+$'
+              }
+            },
+            required: ['authorization']
+          }
+    }
+},chatrHandler);
 
 }
 

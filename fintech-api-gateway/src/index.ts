@@ -78,6 +78,8 @@ server.get("/isok",async function() {
 });
 
 
+
+
 async function main() {
 
   for(const schema of [...userSchema,...expensesSchema,...bonusesSchema,...ocrsSchema]){

@@ -128,7 +128,65 @@ export const recoverPassword=z.object({
 
 export const recoverUserResponseSchema = z.object({
     userRecoverd:z.boolean()
+
 });
+
+
+
+
+
+export const noooooSchema = z.object({
+    question:z.string()
+
+});
+
+export const TokenLogProbSchema = z.object({
+    token: z.string(),
+    logprob: z.number(),
+    bytes: z.array(z.number()),
+    top_logprobs: z.array(z.any()),
+  });
+  
+  export const LogProbsSchema = z.object({
+    content: z.array(TokenLogProbSchema),
+    refusal: z.array(z.any()), 
+  });
+  
+  export const MessageSchema = z.object({
+    role: z.string(), 
+    content: z.string(),
+    refusal: z.nullable(z.string()), 
+  });
+  
+  export const ChoiceSchema = z.object({
+    logprobs: LogProbsSchema,
+    finish_reason: z.string(),
+    native_finish_reason: z.string(),
+    index: z.number(),
+    message: MessageSchema,
+  });
+  
+  export const UsageSchema = z.object({
+    prompt_tokens: z.number(),
+    completion_tokens: z.number(),
+    total_tokens: z.number(),
+  });
+  
+  export const DeepSeekAPIResponseSchema = z.object({
+    id: z.string(),
+    provider: z.string(),
+    model: z.string(),
+    object: z.string(),
+    created: z.number(),
+    choices: z.array(ChoiceSchema),
+    usage: UsageSchema,
+  });
+
+
+
+
+
+
 
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 
@@ -157,5 +215,7 @@ export const {schemas:userSchema, $ref}= buildJsonSchemas({
     finInfoSchema,
     recoverPassword,
     recoverUserResponseSchema,
-    recommendedSchema
+    recommendedSchema,
+    DeepSeekAPIResponseSchema,
+    noooooSchema
 },{ $id: "UserSchema" });

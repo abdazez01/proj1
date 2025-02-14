@@ -328,3 +328,33 @@ export async function recommendUserHandler(request: FastifyRequest, reply: Fasti
         reply.code(500).send({ error });
       }
 }
+interface dd {
+  role:string,
+  content:string
+}
+
+interface resq {
+  model:string,
+  messages:dd[],
+
+}
+const apiKey = process.env.API_KEY;
+export async function chatrHandler(request:FastifyRequest<
+    {
+        Body:{question:string};
+    }
+    >, reply:FastifyReply){
+      const data:resq={  model:"deepseek/deepseek-r1-distill-llama-70b:free",
+        messages:[
+          {role:"system",content:"You are wazen financal assistant"},
+          {role:"user",content:request.body.question+" make the answer no longer than 100 words and it is a new chat"}
+        ],
+        };
+     
+   const response = await axios.post('https://openrouter.ai/api/v1/chat/completions',data,{headers:{
+    'Content-Type':'application/json',
+    'Authorization': `Bearer ${apiKey}`
+}})
+
+return reply.code(201).send(response.data);
+}

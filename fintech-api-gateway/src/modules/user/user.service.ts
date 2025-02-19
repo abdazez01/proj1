@@ -62,7 +62,7 @@ export async function getUserSalary(owener_ID:number){
 }
 
 export async function delUser(owener_ID:number){
-  const delUsere = prisma.user_Info.deleteMany({
+  const delUsere = await prisma.user_Info.deleteMany({
     where:{
       ID:owener_ID
     }
